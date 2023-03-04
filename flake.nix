@@ -14,6 +14,8 @@
         };
     in
       process (builtins.removeAttrs res ["_module"]);
+
+    # A "switch" statement to avoid tons of if-then-else
     process = {
       "option" = value: processOption value;
       "submodule" = value: processOption value;
@@ -28,7 +30,7 @@
     process
     (import "${nixpkgs}/nixos" {
       configuration = {};
-      system = "x86_64-linux";
+      system = "x86_64-linux"; # dummy parameter to avoid impure
     })
     .options;
 }
