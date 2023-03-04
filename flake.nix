@@ -30,6 +30,9 @@
           (self."${smartType}" or (_: _)) x;
       };
     in
-      process (import "${nixpkgs}/nixos" {}).options;
+    process (import "${nixpkgs}/nixos" {
+      configuration = {};
+      system = "x86_64-linux";
+    }).options;
   };
 }
