@@ -21,7 +21,7 @@
       "submodule" = value: path: processOption value path;
       "set" = value: path: builtins.mapAttrs (n: v: process v (path ++ [n])) value;
       "derivation" = value: path: "derivation: ${value.name}";
-      "list" = value: path: map process value;
+      "list" = value: path: map (v: process v path) value;
       "lambda" = value: path: "lambda";
       __functor = self: x: path: let
         smartType =
