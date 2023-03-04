@@ -3,8 +3,8 @@
   outputs = {
     self,
     nixpkgs,
-  }: rec {
-    options = let
+  }: 
+    let
       processOption = value: let
         res =
           (value.type.getSubOptions [])
@@ -34,5 +34,4 @@
       configuration = {};
       system = "x86_64-linux";
     }).options;
-  };
 }
