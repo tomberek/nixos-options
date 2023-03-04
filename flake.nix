@@ -17,11 +17,7 @@
     process = {
       "option" = value: processOption value;
       "submodule" = value: processOption value;
-      "set" = value: let
-        res = builtins.mapAttrs (n: v: process v) value;
-      in
-        res;
-      "string" = value: value;
+      "set" = value: builtins.mapAttrs (n: v: process v) value;
       "lambda" = value: "lambda";
       __functor = self: x: let
         smartType = x._type or (builtins.typeOf x);
