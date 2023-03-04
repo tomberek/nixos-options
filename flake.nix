@@ -4,7 +4,7 @@
     self,
     nixpkgs,
   }: let
-    processOption = value: let
+    processOption = value: path: let
       res =
         (value.type.getSubOptions [])
         // {
@@ -13,23 +13,28 @@
           example = value.example or null;
         };
     in
-      process (builtins.removeAttrs res ["_module"]);
+      process (builtins.removeAttrs res ["_module"]) path;
 
     # A "switch" statement to avoid tons of if-then-else
     process = {
-      "option" = value: processOption value;
-      "submodule" = value: processOption value;
-      "set" = value: builtins.mapAttrs (n: v: process v) value;
-      "derivation" = value: "derivation: ${value.name}";
-      "list" = value: map process value;
-      "lambda" = value: "lambda";
-      __functor = self: x: let
+      "option" = value: path: processOption value path;
+      "submodule" = value: path: processOption value path;
+      "set" = value: path: builtins.mapAttrs (n: v: process v (path ++ [n])) value;
+      "derivation" = value: path: "derivation: ${value.name}";
+      "list" = value: path: map process value;
+      "lambda" = value: path: "lambda";
+      __functor = self: x: path: let
         smartType =
-          if nixpkgs.lib.isDerivation x
-          then "derivation"
-          else x._type or (builtins.typeOf x);
+          builtins.unsafeDiscardStringContext
+          (
+            if nixpkgs.lib.isDerivation x
+            then "derivation"
+            else x._type or (builtins.typeOf x)
+          );
       in
-        (self."${smartType}" or (_: _)) x;
+        if path == ["services" "networking" "websockify" "sslKey"]
+        then "redacted"
+        else (self."${smartType}" or (a: b: a)) x path;
     };
   in
     process
@@ -37,5 +42,5 @@
       configuration = {};
       system = "x86_64-linux"; # dummy parameter to avoid impure
     })
-    .options;
+    .options [];
 }
