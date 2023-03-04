@@ -20,9 +20,13 @@
       "option" = value: processOption value;
       "submodule" = value: processOption value;
       "set" = value: builtins.mapAttrs (n: v: process v) value;
+      "derivation" = value: "derivation: ${value.name}";
       "lambda" = value: "lambda";
       __functor = self: x: let
-        smartType = x._type or (builtins.typeOf x);
+        smartType =
+          if nixpkgs.lib.isDerivation x
+          then "derivation"
+          else x._type or (builtins.typeOf x);
       in
         (self."${smartType}" or (_: _)) x;
     };
