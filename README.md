@@ -5,19 +5,15 @@ Using nix itself to explore NixOS options. Showcases using a `__functor` as a sw
 ## Example
 
 ```shell
-nix eval github:tomberek/nixos-options#services.openssh.settings.Ciphers --json | jq
+nix eval github:tomberek/nixos-options#services.postgresql.extraPlugins --json | jq
 ```
 ```json
 {
-  "default": [
-    "chacha20-poly1305@openssh.com",
-    "aes256-gcm@openssh.com",
-    "aes128-gcm@openssh.com",
-    "aes256-ctr",
-    "aes192-ctr",
-    "aes128-ctr"
-  ],
-  "description": "Allowed ciphers\n\nDefaults to recommended settings from both\n<https://stribika.github.io/2015/01/04/secure-secure-shell.html>\nand\n<https://infosec.mozilla.org/guidelines/openssh#modern-openssh-67>\n",
-  "example": null
+  "default": [],
+  "description": "List of PostgreSQL plugins. PostgreSQL version for each plugin should\nmatch version for `services.postgresql.package` value.\n",
+  "example": {
+    "_type": "literalExpression",
+    "text": "with pkgs.postgresql_11.pkgs; [ postgis pg_repack ]"
+  }
 }
 ```
